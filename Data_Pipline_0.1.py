@@ -2,17 +2,21 @@ import cv2
 import os
 import time
 
-def RGB2BINARY_Transform(Input: str, Output_Folder: str, Save_As_Name: str):
+def RGB2BINARY_Transform(Input: str, Output_Folder1: str, Output_Folder2: str, 
+                         Save_As_Name1: str , Save_As_Name2: str):
 
-    os.makedirs(Output_Folder, exist_ok=True)
+    os.makedirs(Output_Folder1, exist_ok=True)
+    os.makedirs(Output_Folder2, exist_ok=True)
     
     Gray_Image = cv2.imread(Input, cv2.IMREAD_GRAYSCALE)
-    
+
     _, Tran_Image = cv2.threshold(Gray_Image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     
-    Output_Path = os.path.join(Output_Folder, Save_As_Name)
+    Output_Path1 = os.path.join(Output_Folder1, Save_As_Name1)
+    Output_Path2 = os.path.join(Output_Folder2, Save_As_Name2)
 
-    cv2.imwrite(Output_Path, Tran_Image)
+    cv2.imwrite(Output_Path1, Tran_Image)
+    cv2.imwrite(Output_Path2, Gray_Image)
 
 
 def Label_Extract(Input: str, Output_Folder: str, Save_As_Name: str, 
@@ -89,20 +93,20 @@ def Create_TXT(Input_List_Of_Data: list, Number_Of_Chunk:
             file.write(' '.join(map(str, row)) + '\n')
 
 
-def main(Input: str, Class_Number: int, Number_of_Chunk: int):
+def main(Name: str, Input: str, Class_Number: int, Number_of_Chunk: int):
 
-    Final_Output = 'Process Images'
+    Final_Output = f'Process Images {Name}'
     os.makedirs(Final_Output, exist_ok=True)
 
     Count_Origin_Images = os.listdir(Input)
     Output_Binary_Images = f'{Final_Output}/Binary Images'
+    Output_Gray_Images = f'{Final_Output}/Gray Images'
     Output_Label_File = f'{Final_Output}/Label Text File'
 
     for i in range(len(Count_Origin_Images)):
         
-        RGB2BINARY_Transform(f'{Input}/{Count_Origin_Images[i]}', 
-                             Output_Binary_Images, 
-                             f'BR_{Count_Origin_Images[i]}')
+        RGB2BINARY_Transform(f'{Input}/{Count_Origin_Images[i]}', Output_Binary_Images, 
+                             Output_Gray_Images, f'BR_{Count_Origin_Images[i]}', f'GR_{Count_Origin_Images[i]}')
     
     time.sleep(2)
 
@@ -123,8 +127,9 @@ def main(Input: str, Class_Number: int, Number_of_Chunk: int):
 
 if __name__ == "__main__":
 
-    Input_Path = 'C:/Users/Lenovo/Desktop/Rice dataset2/Test'
+    Name = "RD41"
+    Input_Path = 'C:/Users/Aimpr/OneDrive/Desktop/Rice dataset2/Original Picture/RD41'
     Number_of_Chunk = 5
     Class_Number = 0
 
-    main(Input_Path, Class_Number, Number_of_Chunk)
+    main(Name, Input_Path, Class_Number, Number_of_Chunk)
